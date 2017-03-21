@@ -41,6 +41,16 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
         // Dispose of any resources that can be recreated.
     }
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "TagLocation" {
+            let navigationController = segue.destination as! UINavigationController
+            let controller = navigationController.topViewController as! LocationDetailsViewController
+            
+            controller.coordinate = location!.coordinate
+            controller.placemark = placemark
+        }
+    }
+    
     @IBAction func getLocation() {
         let authStatus = CLLocationManager.authorizationStatus()
         if authStatus == .notDetermined {
@@ -200,13 +210,17 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
     }
     
     // MARK: - CLLocationManagerDelegate
+    
     func locationManager(_ manager: CLLocationManager,
                          didFailWithError error: Error) {
         print("didFailWithError \(error)")
+        
         if (error as NSError).code == CLError.locationUnknown.rawValue {
             return
         }
+        
         lastLocationError = error
+        
         stopLocationManager()
         updateLabels()
         configureGetButton()
@@ -216,11 +230,11 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
                          didUpdateLocations locations: [CLLocation]) {
         let newLocation = locations.last!
         print("didUpdateLocations \(newLocation)")
-        // 1
+        
         if newLocation.timestamp.timeIntervalSinceNow < -5 {
             return
         }
-        // 2
+        
         if newLocation.horizontalAccuracy < 0 {
             return
         }
@@ -230,13 +244,12 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
             distance = newLocation.distance(from: location)
         }
         
-        // 3
         if location == nil || location!.horizontalAccuracy > newLocation.horizontalAccuracy {
-            // 4
+            
             lastLocationError = nil
             location = newLocation
             updateLabels()
-            // 5
+            
             if newLocation.horizontalAccuracy <= locationManager.desiredAccuracy{
                 print("*** We're done!")
                 stopLocationManager()
@@ -246,11 +259,15 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
                     performingReverseGeocoding = false
                 }
             }
+            
             if !performingReverseGeocoding {
                 print("*** Going to geocode")
+                
                 performingReverseGeocoding = true
+                
                 geocoder.reverseGeocodeLocation(newLocation, completionHandler: {
                     placemarks, error in
+                    
                     print("*** Found placemarks: \(placemarks), error: \(error)")
                     
                     self.lastGeocodingError = error
@@ -259,6 +276,7 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
                     } else {
                         self.placemark = nil
                     }
+                    
                     self.performingReverseGeocoding = false
                     self.updateLabels()
                 })
@@ -274,3 +292,4 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
         }
     }
 }
+
