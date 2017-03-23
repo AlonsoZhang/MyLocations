@@ -53,6 +53,7 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
     
     @IBAction func getLocation() {
         let authStatus = CLLocationManager.authorizationStatus()
+        
         if authStatus == .notDetermined {
             locationManager.requestWhenInUseAuthorization()
             return

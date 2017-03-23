@@ -9,7 +9,6 @@ private let dateFormatter: DateFormatter = {
 }()
 
 class LocationDetailsViewController: UITableViewController {
-    
     @IBOutlet weak var descriptionTextView: UITextView!
     @IBOutlet weak var categoryLabel: UILabel!
     @IBOutlet weak var latitudeLabel: UILabel!
@@ -84,8 +83,6 @@ class LocationDetailsViewController: UITableViewController {
         return dateFormatter.string(from: date)
     }
     
-    
-    
     @IBAction func done() {
         let hudView = HudView.hud(inView: navigationController!.view, animated: true)
         hudView.text = "Tagged"
@@ -94,6 +91,7 @@ class LocationDetailsViewController: UITableViewController {
             self.dismiss(animated: true, completion: nil)
         }
     }
+    
     @IBAction func cancel() {
         dismiss(animated: true, completion: nil)
     }
@@ -113,7 +111,8 @@ class LocationDetailsViewController: UITableViewController {
     
     // MARK: - UITableViewDelegate
     
-    override func tableView(_ tableView: UITableView,heightForRowAt indexPath: IndexPath) -> CGFloat {
+    override func tableView(_ tableView: UITableView,
+                            heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.section == 0 && indexPath.row == 0 {
             return 88
             
@@ -128,7 +127,8 @@ class LocationDetailsViewController: UITableViewController {
         }
     }
     
-    override func tableView(_ tableView: UITableView,willSelectRowAt indexPath: IndexPath) -> IndexPath? {
+    override func tableView(_ tableView: UITableView,
+                            willSelectRowAt indexPath: IndexPath) -> IndexPath? {
         if indexPath.section == 0 || indexPath.section == 1 {
             return indexPath
         } else {
@@ -136,7 +136,8 @@ class LocationDetailsViewController: UITableViewController {
         }
     }
     
-    override func tableView(_ tableView: UITableView,didSelectRowAt indexPath: IndexPath) {
+    override func tableView(_ tableView: UITableView,
+                            didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 0 && indexPath.row == 0 {
             descriptionTextView.becomeFirstResponder()
         }
